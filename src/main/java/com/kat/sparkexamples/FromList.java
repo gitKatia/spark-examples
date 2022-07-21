@@ -24,6 +24,7 @@ public class FromList {
         doubles.add(29.4);
 
         JavaRDD<Double> rdd = sc.parallelize(doubles);
-        System.out.println(rdd.count());
+        double result = rdd.reduce((a, b) -> a + b);
+        System.out.println(result);
     }
 }
