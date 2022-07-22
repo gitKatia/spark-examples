@@ -9,13 +9,19 @@ import org.apache.spark.api.java.JavaSparkContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
+
 public class FromList {
 
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
         SparkConf conf = new SparkConf().setAppName("Load List").setMaster("local[*]");
         JavaSparkContext sc = new JavaSparkContext(conf);
+        runReduceExample(sc);
+        runMapExample(sc);
+    }
 
+    private static void runReduceExample(JavaSparkContext sc) {
         List<Double> doubles = new ArrayList<>();
         doubles.add(32.1);
         doubles.add(30.3);
@@ -25,6 +31,23 @@ public class FromList {
 
         JavaRDD<Double> rdd = sc.parallelize(doubles);
         double result = rdd.reduce((a, b) -> a + b);
-        System.out.println(result);
+        System.out.println(format("Sum of doubles using Reduce:%s\n", result));
+    }
+
+    private static void runMapExample(JavaSparkContext sc) {
+        List<Integer> integers = new ArrayList<>();
+        integers.add(2);
+        integers.add(3);
+        integers.add(1);
+        integers.add(6);
+        integers.add(9);
+        integers.add(-1);
+
+        JavaRDD<Integer> rdd = sc.parallelize(integers);
+        rdd.foreach(value -> System.out.println(format("Value in Original RDD:%s", value)));
+        System.out.println();
+        JavaRDD<Double> resultRdd = rdd.map(Math::sqrt);
+        resultRdd.foreach(value -> System.out.println(format("Result of Square root of integers using Map: %s", value)));
+        System.out.println();
     }
 }
