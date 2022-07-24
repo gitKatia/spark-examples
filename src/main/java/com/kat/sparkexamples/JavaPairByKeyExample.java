@@ -14,51 +14,16 @@ import java.util.List;
 
 import static java.lang.String.format;
 
-public class FromList {
+public class JavaPairByKeyExample {
 
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
-        SparkConf conf = new SparkConf().setAppName("Load List").setMaster("local[*]");
+        SparkConf conf = new SparkConf().setAppName("JavaPair By Key App").setMaster("local[*]");
         JavaSparkContext sc = new JavaSparkContext(conf);
-        runReduceExample(sc);
-        runMapExample(sc);
         runJavaPairReduceByKeyExample(sc);
         runJavaPairGroupByKeyExample(sc);
     }
 
-    private static void runReduceExample(JavaSparkContext sc) {
-        List<Double> doubles = new ArrayList<>();
-        doubles.add(32.1);
-        doubles.add(30.3);
-        doubles.add(31.5);
-        doubles.add(36.7);
-        doubles.add(29.4);
-
-        JavaRDD<Double> rdd = sc.parallelize(doubles);
-        double result = rdd.reduce((a, b) -> a + b);
-        System.out.println(format("Sum of doubles using Reduce:%s\n", result));
-    }
-
-    private static void runMapExample(JavaSparkContext sc) {
-        List<Integer> integers = new ArrayList<>();
-        integers.add(2);
-        integers.add(3);
-        integers.add(1);
-        integers.add(6);
-        integers.add(9);
-        integers.add(-1);
-
-        JavaRDD<Integer> rdd = sc.parallelize(integers);
-        rdd.foreach(value -> System.out.println(format("Value in Original RDD:%s", value)));
-        System.out.println();
-        JavaRDD<Double> resultRdd = rdd.map(Math::sqrt);
-        resultRdd.foreach(value -> System.out.println(format("Result of Square root of integers using Map: %s", value)));
-        System.out.println();
-        System.out.println(format("Number of items in the resulting RDD:%s\n", resultRdd.count()));
-        long count = resultRdd.map(value -> 1)
-                .reduce((a, b) -> a + b);
-        System.out.println(format("Number of items in the resulting RDD using Map-Reduce:%s\n", count));
-    }
 
     // Not advised
     private static void runJavaPairGroupByKeyExample(JavaSparkContext sc) {
